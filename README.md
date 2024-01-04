@@ -1,49 +1,45 @@
 # Windows-Kernel-Driver-Development
-Windows Kernel Driver Development
 
-Set up Enviroment : 
+Hi Folks, I created this repository 3 years ago althrough I haven't able to continue contribute. I aim to create a documentation on how to develop the kernel driver.
 
-| Host  | Virtual |
+Enviroment Setup: 
+
+| Host Machine | Virtual Machine |
 | ------------- | ------------- |
-| Visual Stduio 2019 Community  | Vmware - Windows 10 x64 (Fireeye Flare)  |
-| Windows Driver Kit (WDK)  | DebugView  |
-| Visual Stduio 2019 Community  | Windbg  |
-| Windows Software Development Kit (SDK)  |   |
-| VirtualKD-Redux (vmmon**) | VirtualKD-Redux (targetx**)|
+| Visual Studio Community 2022 Preview   | DebugView  |
+| Windows Software Development Kit (SDK)   | OSR Driver Loader  |
+| Windows Driver Kit (WDK)  |VirtualKD-Redux Target Platform  |
+| VirtualKD-Redux | - |
+|  Windbg | -  |
+| |
 
 
-Reference : https://docs.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk
+Requirements actions to be done for the Host Machine :
 
-Notice for Virtual Machine : 
+- Windows 10 Pro x64 22H2 19045.3803
+- VirtualKD-Redux must be installed, İf wanted to use the latest version of VMware
+- Windbg must be installed for debugging in Virtual Machine on the host machine 
+- .sympath C:\Symbols;srv*C:\Symbols*https://msdl.microsoft.com/download/symbols
 
-HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Debug Print Filter DEFAULT : REG_DWORD : 0xFFFFFFFF
-https://stackoverflow.com/questions/12494300/no-output-from-debugview
+![image](Pictures/1.jpg)
 
-![image](https://user-images.githubusercontent.com/10811344/131552984-5e07bc5f-8d39-4ba0-b00f-7957d366334c.png)
+Requirements actions to be done for the Virtual Machine :
 
-Windows Driver Loader : 
+- Windows 10 Home x64 22H2 19045.2965
+- bcdedit /set nointegritychecks on; bcdedit /set testsigning on
+- HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Debug Print Filter\ DEFAULT :0xF
 
-https://www.osronline.com/article.cfm%5Earticle=157.htm
-
-If you want to kernel debugging on virtualbox/vmware, you can download virtualkd : 
-
-https://sysprogs.com/legacy/virtualkd/
-https://github.com/4d61726b/VirtualKD-Redux (Vmware 16 - I am using)
-
-I am using vmware and I will follow that instructions : 
-
-![image](https://user-images.githubusercontent.com/10811344/131564967-69054217-2176-4139-abb2-30eaef0bc1d0.png)
-
-![image](https://user-images.githubusercontent.com/10811344/131565123-f5496b9f-ccca-45dc-9e6b-a710e6f3eb1c.png)
-
-![image](https://user-images.githubusercontent.com/10811344/131565185-def3f7c9-87ba-4da7-87aa-1ba85f17eed3.png)
+![image](Pictures/2.jpg)
 
 
+### Create Project
 
-Extract VirtualKD and copy "target" file to virtual machine and as run as admistrator
-F8-Disable Driver Signature Enforcement (VDK-Redux)
-Restart to Virtual Machine
-Restart to Host Machine
+Before creating a project that we need to know what is the difference between WDM and KMDF. While Windows Driver Model (WDM) interacts directly with the operating system, Windows Driver Framework (WDF) focuses on how to handle most of the interactions with the system.
 
-https://github.com/4d61726b/VirtualKD-Redux/blob/master/VirtualKD-Redux/Docs/Tutorial.md
- 
+After creating a project and successfully building it, there is a need to change some of the properties.
+
+- Set project architecture
+- In the C/C++ section, change the warning level value to Level 1
+- In the Linker section, change the Treat Linker Warning As Errors to No
+- In the Driver Settings, change the Target Platform to Desktop and Target OS Version to according to your current operating system
+- If after creating the solution, If you encounter the error "Device driver does not install on any devices, use primitive driver if this is intended." that is necessary to remove the Manufacturer value in the *.inf file.
